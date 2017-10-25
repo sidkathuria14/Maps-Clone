@@ -4,4 +4,5 @@
     <string name="geolocation">AIzaSyBbFavpw0Xt3wdmbXp4E4Y7KNRPxTYvSpM</string>
     <string name="places_api_web_service">AIzaSyA1HYkvHXPDdSRk39Kdpp2_1-EgyDGlC7M</string>
     <string name="street_view">AIzaSyCayXA-9ffhztNk4qk0lgRGY9Ey75nVmLo</string>
+    <string name="directions">AIzaSyC5LHlstfCY3TK_vos7n9FmV7V3iJ-lQaA</string>
 </resources>

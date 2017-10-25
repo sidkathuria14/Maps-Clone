@@ -1,6 +1,7 @@
 package com.example.sidkathuria14.mapsclone;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.util.adapter.TextWatcherAdapter;
 import com.example.sidkathuria14.mapsclone.api.PlacesApi;
+import com.example.sidkathuria14.mapsclone.models.directions.MainDirections;
 import com.example.sidkathuria14.mapsclone.models.models_places.main_places;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +42,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.R.attr.description;
+import static android.R.attr.label;
 import static android.R.id.input;
 
 public class MapsActivity extends AppCompatActivity implements LocationListener,OnMapReadyCallback,GoogleMap.OnMapClickListener,GoogleMap.OnMarkerClickListener {
@@ -58,18 +61,67 @@ public static String[] description = new String[1000];
         //{"yobjkdqhahcs","hello","hiidhcsjhjdbc"};
 public static   Stack<LatLng> locations;
 public static String input;
+
+    public void array(String [] array){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line,array);
+        AutoCompleteTextView textView = (AutoCompleteTextView)
+                findViewById(R.id.etInput);
+        textView.setAdapter(adapter);
+        textView.setThreshold(2);
+    }
+
+    public void TextChanged(String TextInput){
+
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/place/autocomplete/").
+                addConverterFactory(GsonConverterFactory.create()).build();
+
+        final PlacesApi placesApi = retrofit.create(PlacesApi.class);
+        Callback<main_places> callback = new Callback<main_places>() {
+
+            @Override
+            public void onResponse(Call<main_places> call, Response<main_places> response) {
+                Log.d(TAG, "onResponse: " + response.body().getPredictions().length);
+                for(int i=0;i<response.body().getPredictions().length;++i){
+                    description[i] = response.body().getPredictions()[i].getDescription();
+
+                    Log.d(TAG, "onResponse: " +
+                            //response.body().getPredictions()[i].getDescription()
+                            description[i]
+                            + "\n");
+
+                }
+             array(description);
+            }
+
+            @Override
+            public void onFailure(Call<main_places> call, Throwable t) {
+                Log.d(TAG, "onFailure: ");
+            }
+        };
+        placesApi.call_places( TextInput,getString(R.string.places_api_web_service)).enqueue(callback);
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        Log.d(TAG, "onCreate: yoyo");
+        Log.d(TAG, "onCreate: ");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line,description);
+
+
+
+//description[0] = "bali nagar";
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                android.R.layout.simple_dropdown_item_1line,description);
         AutoCompleteTextView textView = (AutoCompleteTextView)
                 findViewById(R.id.etInput);
-        textView.setAdapter(adapter);
-        textView.setThreshold(3);
+//        textView.setAdapter(adapter);
+//        textView.setThreshold(3);
 
 
     //    Log.d(TAG, "onCreate: " + textView.getText().toString());
@@ -146,6 +198,7 @@ public static String input;
                     input = s.toString();
                     TextChanged(input);
                     //description = null;
+
                 }
                 Log.d(TAG, "afterTextChanged: " + input);
             }
@@ -219,42 +272,7 @@ public static String input;
 
 
     }
-    public void TextChanged(String TextInput){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line,description);
-        AutoCompleteTextView textView = (AutoCompleteTextView)
-                findViewById(R.id.etInput);
-        textView.setAdapter(adapter);
-        textView.setThreshold(3);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/place/autocomplete/").
-                addConverterFactory(GsonConverterFactory.create()).build();
-
-        final PlacesApi placesApi = retrofit.create(PlacesApi.class);
-        Callback<main_places> callback = new Callback<main_places>() {
-
-            @Override
-            public void onResponse(Call<main_places> call, Response<main_places> response) {
-                Log.d(TAG, "onResponse: " + response.body().getPredictions().length);
-                for(int i=0;i<response.body().getPredictions().length;++i){
-                    description[i] = response.body().getPredictions()[i].getDescription();
-
-                    Log.d(TAG, "onResponse: " +
-                            //response.body().getPredictions()[i].getDescription()
-                            description[i]
-                            + "\n");
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<main_places> call, Throwable t) {
-                Log.d(TAG, "onFailure: ");
-            }
-        };
-        placesApi.call_places( TextInput,getString(R.string.places_api_web_service)).enqueue(callback);
-
-    }
 
 
 
@@ -373,4 +391,8 @@ public static String input;
     public void onProviderDisabled(String s) {
         Log.d(TAG, "onProviderDisabled: ");
     }
+
+
+
+
 }
