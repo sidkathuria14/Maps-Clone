@@ -1,5 +1,7 @@
 package com.example.sidkathuria14.mapsclone.models.models_geolocation;
 
+import java.util.ArrayList;
+
 /**
  * Created by sidkathuria14 on 18/10/17.
  */
@@ -8,8 +10,8 @@ public class main_geolocation {
    int homeMobileCountryCode,homeMobileNetworkCode;
             String radioType,carrier,considerIp;
 
-   CellTowers[] cellTowers;
-    WifiAccessPoints[] wifiAccessPoints;
+   ArrayList<CellTowers> cellTowers;
+    ArrayList<WifiAccessPoints> wifiAccessPoints;
 
 //    public main_geolocation(int homeMobileCountryCode, int homeMobileNetworkCode,
 //                            String radioType,
@@ -26,11 +28,11 @@ public class main_geolocation {
 //    }
 
 
-    public CellTowers[] getCellTowers() {
+    public ArrayList<CellTowers> getCellTowers() {
         return cellTowers;
     }
 
-    public WifiAccessPoints[] getWifiAccessPoints() {
+    public ArrayList<WifiAccessPoints> getWifiAccessPoints() {
         return wifiAccessPoints;
     }
 
